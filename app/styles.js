@@ -49,10 +49,18 @@ const Quantity = {
     spacing: 4,
 }
 
+const SearchBox = {
+    id: 'outlined-basic',
+    label: 'search items',
+    variant: 'outlined',
+    margin: 'normal',
+}
+
 export { BoxBorder, 
          MainBox, 
          ListBox, 
          Item,
          Quantity,
          ItemBox,
+         SearchBox,
         }

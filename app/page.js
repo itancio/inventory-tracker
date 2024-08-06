@@ -90,18 +90,16 @@ const SearchBar = ({itemQuery, onItemQueryChange}) => {
   return (
     <Box width={500}>
       <form  noValidate autoComplete="on">
-        <TextField id="outlined-basic" 
-          label="search items" 
-          variant="outlined"
-          value = {itemQuery}
-          fullWidth
-          margin='normal'
-          InputProps={{
-            startAdornment: (
+        <TextField 
+        {...style.SearchBox}
+        fullWidth
+        value = {itemQuery}
+        InputProps={{
+          startAdornment: (
               <InputAdornment position="start">
-                <SearchRoundedIcon />
+              <SearchRoundedIcon />
               </InputAdornment>
-            ),
+          ),
           }}
           onChange = {(e) => onItemQueryChange(e.target.value)}  />
           
