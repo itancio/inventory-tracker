@@ -8,6 +8,9 @@ import { collection, doc, docs, getDocs, query, setDoc, deleteDoc, getDoc} from 
 import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
 import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
 import DeleteOutlineRounded from '@mui/icons-material/DeleteOutlineRounded';
+import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import InputAdornment from '@mui/material/InputAdornment';
+
 import * as style from './styles'
 
 import { v4 as uuidv4 } from 'uuid'     // DELETE THESE LINES
@@ -24,7 +27,6 @@ const inventory = [
   { id: 9, name: 'Pear', quantity: 4 },
   { id: 10, name: 'Strawberry', quantity: 3 },
   { id: 11, name: 'Lemon', quantity: 1 },
-
 ];
 
 const ItemsRow = ({name, quantity}) => {
@@ -51,42 +53,65 @@ const ItemsRow = ({name, quantity}) => {
 }
 
 const ItemsTable = ({inventory, itemQuery}) => {
+  const rows = []
+  inventory.map(({ id, name, quantity }) => {
+    if (name.toLowerCase().includes(itemQuery.toLowerCase())) {
+      rows.push(
+        <ItemsRow name = {name} quantity={quantity} key={id}/>
+      )
+    }
+  })
 
+  if (rows.length === 0) {
+    rows.push(
+      <AddItemButton name={itemQuery} key={'addmeitembutton'}/>
+    )
+  }
   return (
     <Box {...style.BoxBorder}>
       <Stack {...style.ListBox}>
-        {inventory.map(({ id, name, quantity }) => {
-          return (
-            <Box key={id}>
-              <ItemsRow name = {name} quantity={quantity} />
-            </Box>
-          );
-        })}
+        {rows}
       </Stack>
     </Box>
   );
 };
 
-const SearchBar = ({itemQuery}) => {
+const AddItemButton = ({itemQuery}) => {
   return (
-    <Box width={600}>
-      <Autocomplete
-        id="free-solo-demo"
-        freeSolo
-        options= {inventory.map((option) => option.name)}
-        renderInput={(params) => 
-          <TextField 
-          {...params}
+    <Box {...style.ListBox}>
+      <Button variant="contained"> 
+        Add New Item
+      </Button>
+    </Box>
+  )
+}
+
+const SearchBar = ({itemQuery, onItemQueryChange}) => {
+  return (
+    <Box width={500}>
+      <form  noValidate autoComplete="on">
+        <TextField id="outlined-basic" 
+          label="search items" 
+          variant="outlined"
           value = {itemQuery}
-          label="search items" />
-        }
-      />
+          fullWidth
+          margin='normal'
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchRoundedIcon />
+              </InputAdornment>
+            ),
+          }}
+          onChange = {(e) => onItemQueryChange(e.target.value)}  />
+          
+      </form>
     </Box>
   )
 }
 
 const FilterableTable = ({inventory}) => {
-  const [itemQuery, setItemQuery] = useState('Apple');
+  const [itemQuery, setItemQuery] = useState('');
   return (
     <Stack {...style.MainBox}>
       <Box >
@@ -95,13 +120,13 @@ const FilterableTable = ({inventory}) => {
         </Typography>
       </Box>
 
-      <SearchBar itemQuery = {itemQuery} />
+      <SearchBar
+        itemQuery = {itemQuery}
+        onItemQueryChange={setItemQuery} />
 
       <ItemsTable inventory={inventory} itemQuery = {itemQuery} />
 
-      <Button variant="contained"> 
-        Add New Item
-      </Button>
+
     </Stack>
   )
 }
