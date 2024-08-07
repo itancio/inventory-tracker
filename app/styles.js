@@ -18,11 +18,27 @@ const BoxBorder = {
     boxShadow: '1px 1px 10px rgba(0, 0, 0, 0.1)'
 }
 
+const ModalBox = {
+    position: 'absolute',
+    top: '50%', 
+    left: '50%', 
+    width: 400,
+    backgroundColor: 'white',
+    border: '2px solid #000',
+    boxShadow: 24,
+    padding: 4,
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 3,
+    sx: {transform: 'translate(-50%, -50%)'}
+}
+
 const ListBox = {
     className: 'list',
-    width: '600px',
+    width: '650px',
     height: '500px', 
     spacing: 1,
+    flexWrap: 'nowrap',
     overflow: 'auto'
 }
 
@@ -51,7 +67,6 @@ const Quantity = {
 
 const SearchBox = {
     id: 'outlined-basic',
-    label: 'search items',
     variant: 'outlined',
     margin: 'normal',
 }
@@ -63,4 +78,5 @@ export { BoxBorder,
          Quantity,
          ItemBox,
          SearchBox,
+         ModalBox,
         }

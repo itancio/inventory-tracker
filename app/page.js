@@ -5,15 +5,8 @@ import { Box, Stack, Modal, Typography, Button, TextField, Autocomplete } from '
 import { firestore } from '@/firebase';
 import { collection, doc, docs, getDocs, query, setDoc, deleteDoc, getDoc} from 'firebase/firestore';
 
-import AddCircleRoundedIcon from '@mui/icons-material/AddCircleRounded';
-import RemoveCircleRoundedIcon from '@mui/icons-material/RemoveCircleRounded';
-import DeleteOutlineRounded from '@mui/icons-material/DeleteOutlineRounded';
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import InputAdornment from '@mui/material/InputAdornment';
-
-import * as style from './styles'
-
-import { v4 as uuidv4 } from 'uuid'     // DELETE THESE LINES
+import FilterableTable from './Components/FilterableTable';
+import Webcam from './Components/Webcam';
 
 const inventory = [
   { id: 1,name: 'Apple', quantity: 5 },
@@ -29,113 +22,41 @@ const inventory = [
   { id: 11, name: 'Lemon', quantity: 1 },
 ];
 
-const ItemsRow = ({name, quantity}) => {
-  return (
-    <Box {...style.Item} >
-      <Typography variant='body1' color='333' textAlign='center'>
-        {name}
-      </Typography>
-      <Box {...style.ItemBox}>
-        <Stack {...style.Quantity}>
-          {quantity === 1 ? (
-            <DeleteOutlineRounded />
-          ) : (
-            <RemoveCircleRoundedIcon />
-          )}
-          <Typography color='333' textAlign='center'>
-            {quantity}
-          </Typography>
-          <AddCircleRoundedIcon />
-        </Stack>
-      </Box>
-    </Box>
-  )
-}
 
-const ItemsTable = ({inventory, itemQuery}) => {
-  const rows = []
-  inventory.map(({ id, name, quantity }) => {
-    if (name.toLowerCase().includes(itemQuery.toLowerCase())) {
-      rows.push(
-        <ItemsRow name = {name} quantity={quantity} key={id}/>
-      )
-    }
-  })
-
-  if (rows.length === 0) {
-    rows.push(
-      <AddItemButton name={itemQuery} key={'addmeitembutton'}/>
-    )
-  }
-  return (
-    <Box {...style.BoxBorder}>
-      <Stack {...style.ListBox}>
-        {rows}
-      </Stack>
-    </Box>
-  );
-};
-
-const AddItemButton = ({itemQuery}) => {
-  return (
-    <Box {...style.ListBox}>
-      <Button variant="contained"> 
-        Add New Item
-      </Button>
-    </Box>
-  )
-}
-
-const SearchBar = ({itemQuery, onItemQueryChange}) => {
-  return (
-    <Box width={500}>
-      <form  noValidate autoComplete="on">
-        <TextField 
-        {...style.SearchBox}
-        fullWidth
-        value = {itemQuery}
-        InputProps={{
-          startAdornment: (
-              <InputAdornment position="start">
-              <SearchRoundedIcon />
-              </InputAdornment>
-          ),
-          }}
-          onChange = {(e) => onItemQueryChange(e.target.value)}  />
-          
-      </form>
-    </Box>
-  )
-}
-
-const FilterableTable = ({inventory}) => {
-  const [itemQuery, setItemQuery] = useState('');
-  return (
-    <Stack {...style.MainBox}>
-      <Box >
-        <Typography variant='h3' > 
-          Inventory List
-        </Typography>
-      </Box>
-
-      <SearchBar
-        itemQuery = {itemQuery}
-        onItemQueryChange={setItemQuery} />
-
-      <ItemsTable inventory={inventory} itemQuery = {itemQuery} />
-
-
-    </Stack>
-  )
-}
 
 export default function Home() {
-  // const filteredInventory = inventory.filter((item) => 
-  //   item.name.toLowerCase().includes(itemQuery.toLowerCase))
+  const [inventory, setInventory] = useState();
+
+  const db_name = 'inventory_db'
+
+  const updateInventory = async (db_name) => {
+    const snapshot = query(collection(firestore, db_name))
+    const docs = await getDocs(snapshot)
+    const inventoryList = []
+  
+    if (!docs.empty) {
+        docs.forEach((doc) => { 
+            inventoryList.push({
+                name: doc.id,
+                ...doc.data(),
+            })
+        })
+    } else {
+        console.log('No documents found')
+    }
+    console.log('Current Inventory:', inventoryList)
+    setInventory(inventoryList)
+  }
+
+  useEffect(() => {
+    updateInventory(db_name)
+  }, [])
+
+
 
   return (
     <Box>
-      <FilterableTable inventory={inventory}/>
+      <FilterableTable inventory={inventory} db_name = {db_name}/>
     </Box>
   )
 }
