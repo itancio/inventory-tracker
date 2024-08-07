@@ -6,7 +6,10 @@ import * as style from '../styles'
 import ItemsTable from './ItemsTable'
 import SearchBar from './SearchBar'
 
-export default function FilterableTable ({inventory}) {
+export default function FilterableTable ({inventory, db_name}) {
+  console.log('FilterableTable:', inventory, inventory.length)
+
+    // const [inventory, setInventory] = useState(initialInventory);
     const [itemQuery, setItemQuery] = useState('');
     return (
       <Stack {...style.MainBox}>
@@ -20,7 +23,7 @@ export default function FilterableTable ({inventory}) {
           itemQuery = {itemQuery}
           onItemQueryChange={setItemQuery} />
   
-        <ItemsTable inventory={inventory} itemQuery = {itemQuery} />
+        <ItemsTable inventory={inventory} itemQuery = {itemQuery} db_name={db_name} />
   
 
       </Stack>

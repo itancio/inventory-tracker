@@ -1,7 +1,7 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Preview to the finish product
-[proj-inventory-tracker.vercel.app](https://inventory-tracker-blue-nine.vercel.app/)
+[proj link](https://inventory-tracker-smoky.vercel.app/)
 
 
 ## Getting Started

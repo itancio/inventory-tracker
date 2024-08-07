@@ -1,9 +1,28 @@
 import { firestore } from '@/firebase';
 import { collection, doc, docs, getDocs, query, setDoc, deleteDoc, getDoc} from 'firebase/firestore';
 
+const db_name = 'inventory_db'
 
-const addItem = async (item, db_name) => {
-    const docRef = doc(collection(firestore, db_name), item)
+const updateInventory = async (db_name) => {
+  const snapshot = query(collection(firestore, db_name))
+  const docs = await getDocs(snapshot)
+  const inventoryList = []
+
+  if (!docs.empty) {
+      docs.forEach((doc) => { 
+          inventoryList.push({
+              name: doc.id,
+              ...doc.data(),
+          })
+      })
+  } else {
+      console.log('No documents found')
+  }
+  return inventoryList
+}
+
+const addItem = async (item, db_name='inventory_db') => {
+    const docRef = doc(collection(firestore, 'inventory_db'), item)
     const docSnapshot = await getDoc(docRef)
 
     if (docSnapshot.exists()) {
@@ -12,10 +31,10 @@ const addItem = async (item, db_name) => {
     } else {
         await setDoc(docRef, { quantity: 1 })
     }
-    await updateInventory()
+    await updateInventory(db_name)
 }
   
-const removeItem = async (item, db_name) => {
+const removeItem = async (item, db_name='inventory_db') => {
 const docRef = doc(collection(firestore, db_name), item)
 const docSnapshot = await getDoc(docRef)
 if (docSnapshot.exists()) {
@@ -24,10 +43,10 @@ if (docSnapshot.exists()) {
         await setDoc(docRef, { quantity: quantity - 1 })
     }
 }
-    await updateInventory()
+    await updateInventory(db_name)
 }
 
-const deleteItem = async (item, db_name) => {
+const deleteItem = async (item, db_name='inventory_db') => {
     const docRef = doc(collection(firestore, db_name), item)
     const docSnapshot = await getDoc(docRef)
     if (docSnapshot.exists()) {
@@ -36,7 +55,7 @@ const deleteItem = async (item, db_name) => {
             await deleteDoc(docRef)
         }
     }
-    await updateInventory()
+    await updateInventory(db_name)
 }
 
-export {removeItem, deleteItem, addItem}
+export {removeItem, deleteItem, addItem, updateInventory}

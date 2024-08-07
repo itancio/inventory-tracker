@@ -5,6 +5,7 @@ import { Box, Stack, Modal, Typography, Button, TextField, Autocomplete } from '
 import { firestore } from '@/firebase';
 import { collection, doc, docs, getDocs, query, setDoc, deleteDoc, getDoc} from 'firebase/firestore';
 
+import { updateInventory } from './helper'
 import FilterableTable from './Components/FilterableTable';
 import Webcam from './Components/Webcam';
 
@@ -25,35 +26,20 @@ import Webcam from './Components/Webcam';
 
 
 export default function Home() {
-  const [inventory, setInventory] = useState();
-
-  const db_name = 'inventory_db'
-
-  const updateInventory = async (db_name) => {
-    const snapshot = query(collection(firestore, db_name))
-    const docs = await getDocs(snapshot)
-    const inventoryList = []
+  const [inventory, setInventory] = useState([]);
+  const db_name = 'inventory_db' // delete later and in all its children
   
-    if (!docs.empty) {
-        docs.forEach((doc) => { 
-            inventoryList.push({
-                name: doc.id,
-                ...doc.data(),
-            })
-        })
-    } else {
-        console.log('No documents found')
-    }
-    console.log('Current Inventory:', inventoryList)
-    setInventory(inventoryList)
-  }
-
+  updateInventory(db_name)
+  
   useEffect(() => {
-    updateInventory(db_name)
-  }, [])
+    (async () => {
+      const inventoryList = await updateInventory(db_name);
+      setInventory(inventoryList);
+    })();
+  }, []);
 
 
-
+  
   return (
     <Box>
       <FilterableTable inventory={inventory} db_name = {db_name}/>

@@ -13,7 +13,7 @@ export default function ItemsRow({name, quantity, db_name}) {
       <Typography variant='body1' color='333' textAlign='center'>
         {name}
       </Typography>
-      <Box {...style.ItemBox}>
+      <Box {...style.ItemBox} key={name}>
         <Stack {...style.Quantity}>
           {quantity === 1 ? (
             <DeleteOutlineRounded onClick={() => deleteItem(name, db_name)}/>
