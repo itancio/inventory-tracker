@@ -34,7 +34,7 @@ export default function Home() {
   useEffect(() => {
     (async () => {
       const inventoryList = await updateInventory(db_name);
-      setInventory(inventoryList);
+      await setInventory(inventoryList);
     })();
   }, []);
 

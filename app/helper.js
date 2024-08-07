@@ -1,9 +1,7 @@
 import { firestore } from '@/firebase';
 import { collection, doc, docs, getDocs, query, setDoc, deleteDoc, getDoc} from 'firebase/firestore';
 
-const db_name = 'inventory_db'
-
-const updateInventory = async (db_name) => {
+const updateInventory = async (db_name='inventory_db') => {
   const snapshot = query(collection(firestore, db_name))
   const docs = await getDocs(snapshot)
   const inventoryList = []
@@ -35,16 +33,16 @@ const addItem = async (item, db_name='inventory_db') => {
 }
   
 const removeItem = async (item, db_name='inventory_db') => {
-const docRef = doc(collection(firestore, db_name), item)
-const docSnapshot = await getDoc(docRef)
-if (docSnapshot.exists()) {
-    const {quantity} = docSnapshot.data()
-    if (quantity > 1) {
-        await setDoc(docRef, { quantity: quantity - 1 })
+    const docRef = doc(collection(firestore, db_name), item)
+    const docSnapshot = await getDoc(docRef)
+    if (docSnapshot.exists()) {
+        const {quantity} = docSnapshot.data()
+        if (quantity > 1) {
+            await setDoc(docRef, { quantity: quantity - 1 })
+        }
     }
-}
-    await updateInventory(db_name)
-}
+        await updateInventory(db_name)
+    }
 
 const deleteItem = async (item, db_name='inventory_db') => {
     const docRef = doc(collection(firestore, db_name), item)
